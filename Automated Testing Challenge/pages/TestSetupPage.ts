@@ -22,12 +22,14 @@ class TestSetupPage {
   readonly startEventElement: Locator;
   readonly appendTaskButton: Locator;
   readonly changeTypeButton: Locator;
-  readonly userTaskOption: Locator;
+  readonly serviceTaskOption: Locator;
   readonly appendEndEventButton: Locator;
   readonly startInstanceMainButton: Locator;
   readonly startInstanceSubButton: Locator;
   readonly viewProcessInstanceLink: Locator;
   readonly nameInput: Locator;
+  readonly taskDefinition: Locator;
+  readonly taskDefinitionInput: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -66,7 +68,7 @@ class TestSetupPage {
     this.startEventElement = page.locator('[data-element-id="StartEvent_1"]');
     this.appendTaskButton = page.getByTitle('Append Task');
     this.changeTypeButton = page.getByTitle('Change type');
-    this.userTaskOption = page.getByText('User Task');
+    this.serviceTaskOption = page.getByRole('listitem', { name: 'Service Task' });
     this.appendEndEventButton = page.getByTitle('Append EndEvent');
     this.startInstanceMainButton = page.getByRole('button', {name: 'Run'});
     this.startInstanceSubButton = page
@@ -76,6 +78,8 @@ class TestSetupPage {
         name: 'View process instance',
       });
     this.nameInput = page.getByLabel('Name', {exact: true});
+    this.taskDefinitionInput = page.getByLabel('Type');
+    this.taskDefinition = page.locator('div').filter({ hasText: /^Task definition$/ }).first();
   }
 
   async fillUsername(username: string): Promise<void> {
@@ -140,8 +144,8 @@ class TestSetupPage {
     await this.changeTypeButton.click({timeout: 30000});
   }
 
-  async clickUserTaskOption(): Promise<void> {
-    await this.userTaskOption.click({timeout: 60000, force: true});
+  async clickServiceTaskOption(): Promise<void> {
+    await this.serviceTaskOption.click({timeout: 60000, force: true});
   }
 
   async clickAppendEndEventButton(): Promise<void> {
@@ -166,6 +170,18 @@ class TestSetupPage {
 
   async fillNamedInput(name: string): Promise<void> {
     await this.nameInput.fill(name);
+  }
+
+  async clickTaskDefinition(): Promise<void> {
+    await this.taskDefinition.click();
+  }
+
+  async clickTaskDefinitionInput(): Promise<void> {
+    await this.taskDefinitionInput.click();
+  }
+
+  async fillTaskDefinitionInput(name: string): Promise<void> {
+    await this.taskDefinitionInput.fill(name);
   }
 
   async loginAndNavigateToWebModeler(credentials: {username?: string; password?: string} = {}) {
@@ -198,11 +214,14 @@ class TestSetupPage {
     });
     await this.clickGeneralPropertiesPanel();
     await this.clickProcessIdInput();
-    await this.fillProcessIdInput('User_Task_Process');
+    await this.fillProcessIdInput('Service_Task_Process');
     await this.clickStartEventElement();
     await this.clickAppendTaskButton();
     await this.clickChangeTypeButton();
-    await this.clickUserTaskOption();
+    await this.clickServiceTaskOption();
+    await this.clickTaskDefinition();
+    await this.clickTaskDefinitionInput();
+    await this.fillTaskDefinitionInput('Test');
     await this.clickAppendEndEventButton();
     await expect(this.startInstanceMainButton).toBeVisible({
       timeout: 60000,
