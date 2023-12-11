@@ -22,6 +22,7 @@ git clone https://github.com/camunda/qa-hiring.git
 2. Install the dependencies:
 
 ```bash
+npm install
 npx playwright install
 ```
 
