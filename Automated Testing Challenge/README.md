@@ -1,4 +1,4 @@
-# QA Automated Testing Challenge
+# Camunda QA Engineer Automated Remote Test Challenge
 
 ## Overview
 
