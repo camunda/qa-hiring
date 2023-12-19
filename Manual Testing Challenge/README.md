@@ -21,13 +21,13 @@ Inside your project you can create a process now. You can make use of the BPMN t
 ## Deploy the Process 
 
 * Select the correct Zeebe version in the bottom bar (bottom right). Version: 8.4.0-alpha
-* Click the **Deplyo** button and confirm the selected cluster. The correct cluster is already pre-selected. 
+* Click the **Deploy** button and confirm the selected cluster. The correct cluster is already pre-selected. 
 
 ## Start an Instance
 
-Now, that you have deplyoed a process model you can start as many instances of this process as you want.
+Now, that you have deployed a process model you can start as many instances of this process as you want.
 * Click the **Run** button
-* Add variables to your process instance. [Variables](https://docs.camunda.io/docs/components/concepts/variables/) are part of a process instance and represent the data of the instance. You can pass variables in JSON formate like toe following:
+* Add variables to your process instance. [Variables](https://docs.camunda.io/docs/components/concepts/variables/) are part of a process instance and represent the data of the instance. You can pass variables in JSON formate like the following:
 ```
 {
     "candidateName":"Joe",
