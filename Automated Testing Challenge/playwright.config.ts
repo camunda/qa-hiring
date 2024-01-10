@@ -7,6 +7,8 @@ export default defineConfig({
   testDir: './tests',
   reporter: 'html',
   timeout: 3 * 60 * 1000,
+  workers: 1,
+  retries: 1,
   use: {
     baseURL: 'https://weblogin.cloud.camunda.io/',
     actionTimeout: 20000,

@@ -68,8 +68,8 @@ class TestSetupPage {
     this.startEventElement = page.locator('[data-element-id="StartEvent_1"]');
     this.appendTaskButton = page.getByTitle('Append Task');
     this.changeTypeButton = page.getByTitle('Change type');
-    this.serviceTaskOption = page.getByRole('listitem', { name: 'Service Task' });
-    this.appendEndEventButton = page.getByTitle('Append EndEvent');
+    this.serviceTaskOption = page.getByRole('listitem', { name: 'Service task' });
+    this.appendEndEventButton = page.getByTitle('Append end event');
     this.startInstanceMainButton = page.getByRole('button', {name: 'Run'});
     this.startInstanceSubButton = page
         .getByRole('button', {name: 'Run'})
@@ -133,7 +133,7 @@ class TestSetupPage {
   }
 
   async clickStartEventElement(): Promise<void> {
-    await this.startEventElement.click();
+    await this.startEventElement.dblclick();
   }
 
   async clickAppendTaskButton(): Promise<void> {
@@ -141,11 +141,30 @@ class TestSetupPage {
   }
 
   async clickChangeTypeButton(): Promise<void> {
-    await this.changeTypeButton.click({timeout: 30000});
+    await this.changeTypeButton.dblclick({force: true, timeout: 30000});
   }
 
   async clickServiceTaskOption(): Promise<void> {
-    await this.serviceTaskOption.click({timeout: 60000, force: true});
+    const maxRetries = 3;
+
+    for (let retries = 0; retries < maxRetries; retries++) {
+      try {
+        if (retries === 0) {
+          await this.serviceTaskOption.click({timeout: 30000});
+        } else {
+          await this.changeTypeButton.click({timeout: 30000});
+          await this.serviceTaskOption.click({timeout: 30000});
+        }
+        return;
+      } catch (error) {
+        console.error(`Click attempt ${retries + 1} failed: ${error}`);
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+      }
+    }
+
+    throw new Error(
+      `Failed to click after ${maxRetries} attempts.`,
+    );
   }
 
   async clickAppendEndEventButton(): Promise<void> {
@@ -198,7 +217,30 @@ class TestSetupPage {
     await this.clickLoginButton();
     await expect(this.welcomeMessage).toBeVisible({timeout: 60000});
     await this.camundaComponentsButton.click();
-    await this.modelerLink.click();
+    await this.clickModelerLink();
+  }
+
+  async clickModelerLink(): Promise<void> {
+    const maxRetries = 3;
+
+    for (let retries = 0; retries < maxRetries; retries++) {
+      try {
+        if (retries === 0) {
+          await this.modelerLink.click({timeout: 30000});
+        } else {
+          await this.camundaComponentsButton.click({timeout: 30000});
+          await this.modelerLink.click({timeout: 30000});
+        }
+        return;
+      } catch (error) {
+        console.error(`Click attempt ${retries + 1} failed: ${error}`);
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+      }
+    }
+
+    throw new Error(
+      `Failed to click the modeler link after ${maxRetries} attempts.`,
+    );
   }
 
   async createAndDeployUserTaskDiagram(): Promise<void> {
@@ -230,6 +272,8 @@ class TestSetupPage {
     await expect(this.page.getByText('Healthy', {exact: true})).toBeVisible({
       timeout: 60000,
     });
+    await this.page.getByLabel('Variables').click();
+    await this.page.getByLabel('Variables').fill('{"test":"test"}');
     await this.clickStartInstanceSubButton();
     await expect(this.viewProcessInstanceLink).toBeVisible({
       timeout: 120000,
